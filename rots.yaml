@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rots
+  labels:
+    app: rots
+spec:
+  type: NodePort
+  ports:
+    - port: 25565
+  selector:
+    app: rots
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rots
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rots
+  template:
+    metadata:
+      labels:
+        app: rots
+
+    spec:
+      containers:
+      - name: rots
+        image: ghcr.io/2143-labs/rots:351
+        imagePullPolicy: Always
+
+        ports:
+        - containerPort: 25565
+
+        env:
+
+        volumeMounts:
+
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
+
+      volumes:
+      - name: mongodata
+        emptyDir:
+          sizeLimit: 100Mi
+        #persistentVolumeClaim:
+          #claimName: mongo-volume-claim
+
