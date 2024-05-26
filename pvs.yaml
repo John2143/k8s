@@ -24,17 +24,17 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: server-image-pv
+  name: server-pv
 spec:
   capacity:
-    storage: 1000Gi
+    storage: 300Gi
   volumeMode: Filesystem
   accessModes:
   - ReadWriteMany
   # persistentVolumeReclaimPolicy: Delete
   storageClassName: local-storage
   local:
-    path: /data/john/juushFiles/
+    path: /data/john/kube/
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -43,4 +43,3 @@ spec:
           operator: In
           values:
           - server
-
