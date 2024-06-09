@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: downstairs-pv
+  name: closet-pv
 spec:
   capacity:
     storage: 150Gi
@@ -19,7 +19,7 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - downstairs
+          - closet
 ---
 apiVersion: v1
 kind: PersistentVolume

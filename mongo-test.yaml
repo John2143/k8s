@@ -21,6 +21,7 @@ spec:
   type: NodePort
   ports:
     - port: 27017
+      nodePort: 32052
   selector:
     app: mongo
 ---

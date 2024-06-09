@@ -1,26 +1,42 @@
-#apiVersion: v1
-#kind: PersistentVolumeClaim
-#metadata:
-  #name: server-image-pv-claim
-  #labels:
-    #app: imagehost
-#spec:
-  #accessModes:
-    #- ReadWriteOnce
-  #resources:
-    #requests:
-      #storage: 100Gi
-#---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: server-image-pv-claim
+  labels:
+    app: imagehost
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 50Gi
+---
 apiVersion: v1
 kind: Service
 metadata:
-  name: imagehost
+  name: imagehost-lb
+  labels:
+    app: imagehost
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 3000
+  selector:
+    app: imagehost
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: imagehost-np
   labels:
     app: imagehost
 spec:
   type: NodePort
   ports:
     - port: 3000
+      nodePort: 31144
   selector:
     app: imagehost
 ---
@@ -47,7 +63,7 @@ spec:
               - key: kubernetes.io/hostname
                 operator: In
                 values:
-                - server
+                - closet
       containers:
       - name: imagehost
         image: ghcr.io/john2143/john2143.com:20
@@ -68,17 +84,17 @@ spec:
             cpu: 500m
             memory: 512Mi
 
-      tolerations:
-      - key: "server"
-        operator: "Exists"
-        effect: "PreferNoSchedule"
+      #tolerations:
+      #- key: "server"
+        #operator: "Exists"
+        #effect: "PreferNoSchedule"
 
       volumes:
       - name: data-volume
-        hostPath:
-          path: /data/john/juushFiles
-          type: Directory
+        #hostPath:
+          #path: /data/john/juushFiles
+          #type: Directory
         #emptyDir:
           #sizeLimit: 100Mi
-        #persistentVolumeClaim:
-          #claimName: server-image-pv-claim
+        persistentVolumeClaim:
+          claimName: server-image-pv-claim
